@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<!--
+    Author: Vedant Shah
+    Purpose: Veer AI Take-Home Assignment
+    Date Due: Thursday, May 7, 2020
+    Date Submitted: Thursday, May 7, 2020
+    -->
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>
+        Veer AI Project
+    </title>
+    <!-- Adding jQuery to webpage (without downloading) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+    <!-- 2.1: Created a form that does not let user submit unless all fields are entered and formatted correctly; it is added to a MySQL database in the server-side (see app.js)-->
+    <p><b>Challenge 1:</b></p>
+    <form action="/add-client" method="POST" id="submit_client">
+        <div>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+            <label for="pNumber">Phone Number (ex: 9999999999):</label><br>
+            <input type="tel" id="pNumber" name="pNumber" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required><br>
+            <input type="submit" value="Enter" />
+        </div>
+    </form>
+
+    <!-- 2.1: Used AJAX to pull information from NASA's Astronomy Picture of the Day (APOD) API. Outputs the image and a description of the image-->
+    <p><b>Challenge 2:</b></p>
+    <div>
+        <button type="button" id="button">Click Me!</button>
+        <thing id="image"></thing>
+        <p id="text"></p>
+        <script>
+            // When the button with id: 'button' is clicked, the callAPI() function will be called
+            document.getElementById("button").addEventListener("click", callAPI);
+
+            // This is retreiving information some information related to the NASA APOD API
+            function callAPI() {
+                $.ajax({
+                    // API url
+                    url: "https://api.nasa.gov/planetary/apod?api_key=B3Witd7w2YnhB7lkvNTu8BLmz4buzNNYbJcKsNfh",
+                    success: function (obj) {
+                        console.log(obj.url);
+                        document.getElementById("image").innerHTML = "<img src=" + obj.url + ">";
+                        document.getElementById("text").innerHTML = obj.explanation;
+                    }
+                });
+            };
+        </script>
+    </div>
+
+    <!-- 2.1: Sending an external request to my RESTful API endpoint and outputting the result, which is done on the server-side (see app.js) -->
+    <p><b>Challenge 3:</b></p>
+    <form name="form_3" method="POST" id="submit">
+        <div>
+            <label for="text_input">Enter text:</label><br>
+            <input type="text" id="text_input" name="text_input"><br>
+            <input type="submit" value="Enter" />
+            <script type="text/javascript">
+
+                // When the button with id: 'button' is clicked, the callREST() function will be called
+                document.getElementById("submit").addEventListener("submit", callREST);
+
+                function callREST(e) {
+                    e.preventDefault();
+                    // Retreiving user's input
+                    var check = document.getElementById("text_input").value;
+                    // API url
+                    var apiURL = 'http://localhost:3000/api/foo-bar';
+
+                    // Fetching the API url and sending the user's input to app.js; after parsing the retrieved JSON object, alerting the user if their input
+                    // matched the keywords of "Foo" or "Bar"
+                    fetch(apiURL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${check}`
+                    }).then(res => res.text()).then(response => {
+                        response = JSON.parse(response);
+                        alert(response.result);
+                    }).catch(err => {
+                        alert("Error in retreiving response.");
+                    });
+                }
+            </script>
+        </div>
+    </form>
+</body>
+</html>
